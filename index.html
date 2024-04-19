@@ -38,16 +38,6 @@ function rotateImageData(imageData, degree) {
 
   return new ImageData(rotatedData, rotatedWidth, rotatedHeight);
 }
-
-function dataUrItoBlob(dataUri) {
-            var binary = atob(dataUri.split(',')[1]);
-            var mimeString = dataUri.split(',')[0].split(':')[1].split(';')[0];
-            var array = [];
-            for (var i = 0; i < binary.length; i++) {
-                array.push(binary.charCodeAt(i));
-            }
-            return new Blob([new Uint8Array(array)], { type: mimeString });
-        }
         
   var img = document.createElement("img");
   
@@ -70,15 +60,16 @@ function dataUrItoBlob(dataUri) {
     canvas.height = imageData.height;
     // Put the modified data back onto the canvas
     ctx.putImageData(imageData, 0, 0);
+	  
+	canvas.toBlob((blob) => {
+			const img2 = document.getElementById("myImage2");
+			img2.src = URL.createObjectURL(blob);
+		      img2.onload = () => {
+		      debugger;
+		        URL.revokeObjectURL(img2.src);
+		      };
+	}, "image/jpeg", 1);
 
-    const blob = dataUrItoBlob(canvas.toDataURL("image/jpeg"));
-
-	const img2 = document.getElementById("myImage2");
-	img2.src = URL.createObjectURL(blob);
-      img2.onload = () => {
-      debugger;
-        URL.revokeObjectURL(img2.src);
-      };
     
     // You can now use the processedImage as a regular image element
     // e.g., append it to the document or perform further actions
